@@ -2,10 +2,11 @@ const express = require('express'); // importing a CommonJS module
 
 const router = express.Router();
 const UserDb = require('./userDb.js');
+const PostDb = require('../posts/postDb');
 
 
 router.use((req,res,next)=> {
-  console.log('Hubs router yay');
+  console.log('userRouter yippee');
   next();
 })
 
@@ -15,49 +16,42 @@ router.use(logger);
 
 
 // endpoints
-// router.post('/', (req, res) => {
-
-// });
-
-router.post('/', async (req, res) => {
+// api/users
+router.post('/', validateUser, async (req, res) => {
     try {
       const user = await UserDb.insert(req.body);
       res.status(201).json(user);
     } catch (error) {
-      // log error to database
       console.log(error);
-      res.status(500).json({
-        message: 'Error adding the user',
-      });
+      next(({message: 'Error getting the posts for the user'}));
+    //   res.status(500).json({
+    //     message: 'Error adding the user',
+    //   });
     }
   });
 
-router.post('/id/posts', validateUserId, async (req, res) => {
+  // using PostDb
+router.post('/:id/posts', validatePost, async (req, res) => {
     const postInfo = { ...req.body, user_id: req.params.id };
 
     try {
-        const post = await UserDb.insert(postInfo);
-        res.status(210).json(message);
+      const post = await PostDb.insert(postInfo);
+      res.status(210).json(post);
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: 'Error getting the posts for the user'
-        });
+      console.log(error);
+      res.status(500).json({
+        message: 'missing post data',
+      });
     }
-
 });
-
 
 router.get('/', async (req, res) => {
     try {
       const users = await UserDb.get(req.query);
       res.status(200).json(users);
     } catch (error) {
-      // log error to database
       console.log(error);
-      res.status(500).json({
-        message: 'Error retrieving the users Greg',
-      });
+      next(({message: 'Error retrieving the users Greg'}))
     }
   });
 
@@ -68,43 +62,61 @@ router.get('/:id', validateUserId, async (req, res) => {
         if (user) {
           res.status(200).json(user);
         } else {
-          res.status(404).json({ message: 'user not found' });
+        next(({message: 'user not found'}))
         }
       } catch (error) {
-        // log error to database
         console.log(error);
-        res.status(500).json({
-          message: 'Error retrieving the user',
-        });
+        next(({message: 'Error retrieving the user'}))
       }
 });
 
 router.get('/:id/posts', validateUserId, async (req, res) => {
+   
     try {
         const posts = await UserDb.getUserPosts(req.params.id);
     
         res.status(200).json(posts);
       } catch (error) {
-        // log error to database
         console.log(error);
         res.status(500).json({
-          message: 'Error getting the posts for the user',
+          message: 'Error getting the messages for the hub',
         });
       }
+   
 });
 
 router.delete('/:id', validateUserId, async (req, res) => {
-
+    try {
+        const count = await UserDb.remove(req.params.id);
+        if (count > 0) {
+          res.status(200).json({ message: 'The user has been nuked' });
+        } else {
+          res.status(404).json({ message: 'The user could not be found' });
+        }
+      } catch (error) {
+        console.log(error);
+        next(({message: 'Error removing the user'}));
+      }
 });
 
-router.put('/:id', validateUserId, async (req, res) => {
+router.put('/:id', validateUser, validateUserId, async (req, res) => {
+
+    try {
+        const user = await UserDb.update(req.params.id, req.body);
+        if (user) {
+          res.status(200).json(user);
+        } else {
+          res.status(404).json({ message: 'The user could not be found' });
+        }
+      } catch (error) {
+        console.log(error);
+        next(({message: 'Error updating the user'}));
+      }
 
 });
 
 //custom middleware
 
-// function validateUserId(req, res, next) {
-// };
 async function validateUserId (req, res, next) {
     try{
       const { id } = req.params;
@@ -116,17 +128,28 @@ async function validateUserId (req, res, next) {
         res.status(400).json({message: 'invalid user id'});
       }
     } catch (err) {
-      res.status(500).json({message:'failed to process async request'})
+        next(({message: 'failed to process async request'}));
+    //   res.status(500).json({message:'failed to process async request'})
     } 
   
   }
 
-function validateUser(req, res, next) {
-
-};
+function validateUser(req, res, next) { // post and put requests before async
+    
+    if (req.body && Object.keys(req.body).length) {
+    next();
+    } else {
+    next(({message: 'missing user data'}));
+    }
+}
 
 function validatePost(req, res, next) {
 
+    if (req.body && Object.keys(req.body).length) {
+        next();
+        } else {
+        next(({message: 'missing post data'}));
+        }
 };
 
 module.exports = router;

@@ -26,9 +26,9 @@ Follow these steps for completing your project.
 
 ## Minimum Viable Product
 
-1. Write and implement four custom `middleware` functions, detailed below.
-1. Build an API to let clients perform CRUD operations on `users`.
-1. Add endpoints to retrieve the list of `posts` for a `user` and to store a new `post` for a `user`.
+1. [x] Write and implement four custom `middleware` functions, detailed below.
+1. [x] Build an API to let clients perform CRUD operations on `users`.
+1. [x] Add endpoints to retrieve the list of `posts` for a `user` and to store a new `post` for a `user`.
 
 #### Custom Middleware Requirements
 
@@ -36,32 +36,33 @@ Follow these steps for completing your project.
   - `logger` logs to the console the following information about each request: request type, request url, and a timestamp
   - this middleware runs on every request made to the API
 
-- `validateUserId()`
+- [x] `validateUserId()`
   - `validateUserId` validates the user id on every request that expects a user id parameter
   - if the `id` parameter is valid, store that user object as `req.user`
   - if the `id` parameter does not match any user id in the database, cancel the request and respond with status `400` and `{ message: "invalid user id" }`
 
-- `validateUser()`
-  - `validateUser` validates the `body` on a request to create a new user
-  - if the request `body` is missing, cancel the request and respond with status `400` and `{ message: "missing user data" }`
-  - if the request `body` is missing the required `name` field, cancel the request and respond with status `400` and `{ message: "missing required name field" }`
+- [x] `validateUser()`
+  -  [x] `validateUser` validates the `body` on a request to create a new user
+  -  [? only body is name ] if the request `body` is missing, cancel the request and respond with status `400` and `{ message: "missing user data" }`
+  - [x] if the request `body` is missing the required `name` field, cancel the request and respond with status `400` and `{ message: "missing required name field" }`
 
 - `validatePost()`
   - `validatePost` validates the `body` on a request to create a new post
-  - if the request `body` is missing, cancel the request and respond with status `400` and `{ message: "missing post data" }`
-  - if the request `body` is missing the required `text` field, cancel the request and respond with status `400` and `{ message: "missing required text field" }`
+  - [x] if the request `body` is missing, cancel the request and respond with status `400` and `{ message: "missing post data" }`
+  - [x] if the request `body` is missing the required `text` field, cancel the request and respond with status `400` and `{ message: "missing required text field" }`
 
 ### Database Persistence Helpers
 
-There are two helper files that you can use to manage the persistence of _users_ and _posts_ data. These files are `users/userDb.js` and `posts/postDb.js`. Both files publish the following api:
+There are two helper files that you can use to manage the persistence of _users_ and _posts_ data. These files are `users/userDb.js` and `posts/p.nameostDb.js`. Both files publish the following api:
 
-- [x] `get()`: calling find returns a promise that resolves to an array of all the `resources` contained in the database.
-- `getById()`: takes an `id` as the argument and returns a promise that resolves to the `resource` with that id if found.
-- `insert()`: calling insert passing it a `resource` object will add it to the database and return the new `resource`.
-- `update()`: accepts two arguments, the first is the `id` of the `resource` to update and the second is an object with the `changes` to apply. It returns the count of updated records. If the count is 1 it means the record was updated correctly.
-- `remove()`: the remove method accepts an `id` as it's first parameter and, upon successfully deleting the `resource` from the database, returns the number of records deleted.
+- [U, P] = [User, Post] completed.
+- [U, P] `get()`: calling find returns a promise that resolves to an array of all the `resources` contained in the database.
+- [U, P] `getById()`: takes an `id` as the argument and returns a promise that resolves to the `resource` with that id if found.
+- [U, ] `insert()`: calling insert passing it a `resource` object will add it to the database and return the new `resource`.
+- [U, ] `update()`: accepts two arguments, the first is the `id` of the `resource` to update and the second is an object with the `changes` to apply. It returns the count of updated records. If the count is 1 it means the record was updated correctly.
+- [U, ] `remove()`: the remove method accepts an `id` as it's first parameter and, upon successfully deleting the `resource` from the database, returns the number of records deleted.
 
-The `userDb.js` helper includes an extra method called `getUserPosts()` that when passed a user's `id`, returns a list of all the `posts` for the `user`.
+- [U] The `userDb.js` helper includes an extra method called `getUserPosts()` that when passed a user's `id`, returns a list of all the `posts` for the `user`.
 
 **All helper methods return a promise.**
 
