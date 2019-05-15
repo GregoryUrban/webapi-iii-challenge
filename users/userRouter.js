@@ -148,7 +148,7 @@ function validatePost(req, res, next) {
     if (req.body && Object.keys(req.body).length) {
         next();
         } else {
-        next(({message: 'missing post data'}));
+        next(({message: 'missing required text field"'}));
         }
 };
 
