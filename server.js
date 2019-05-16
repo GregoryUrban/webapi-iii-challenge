@@ -1,6 +1,10 @@
 const express = require('express'); // importing a CommonJS module
 const helmet = require('helmet')
+
 const server = express();
+
+server.use(helmet());
+
 server.use(express.json()); 
 
 const userRouter = require('./users/userRouter'); // importing a CommonJS module
