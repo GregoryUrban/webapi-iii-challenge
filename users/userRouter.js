@@ -24,9 +24,6 @@ router.post('/', validateUser, async (req, res) => {
     } catch (error) {
       console.log(error);
       next(({message: 'Error getting the posts for the user'}));
-    //   res.status(500).json({
-    //     message: 'Error adding the user',
-    //   });
     }
   });
 
