@@ -1,15 +1,25 @@
-const express = 'express';
+const express = require('express'); // importing a CommonJS module
+const helmet = require('helmet')
 
 const server = express();
 
-server.get('/', (req, res) => {
-  res.send(`<h2>Let's write some middleware!</h2>`)
-});
+server.use(helmet());
 
-//custom middleware
+server.use(express.json()); 
 
-function logger(req, res, next) {
+const userRouter = require('./users/userRouter'); // importing a CommonJS module
+server.use('/api/users', userRouter);
+// const postRouter = require('./users/userRouter'); // importing a CommonJS module
+// server.use('/api/posts', postRouter);
 
-};
+//custom middleware - moved into new file, /middleware/userRouter
+
+// safety first!
+server.use((err, req, res, next) => {
+  res.status(500).json({
+    message: "Bad Panda",
+    err
+  });
+})
 
 module.exports = server;
